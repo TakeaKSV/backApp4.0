@@ -14,16 +14,22 @@ export const login = async (req: Request, res: Response): Promise<Response | und
         return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Permitir login con contraseña encriptada o texto plano
+    let isMatch = false;
+    if (user.password.startsWith('$2a$') || user.password.startsWith('$2b$') || user.password.startsWith('$2y$')) {
+        // Contraseña encriptada (bcrypt)
+        isMatch = await bcrypt.compare(password, user.password);
+    } else {
+        // Contraseña en texto plano
+        isMatch = password === user.password;
+    }
 
     if (!isMatch) {
         return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
     const accessToken = generateAccessToken(user.id);
-
     cache.set(user.id, accessToken, 60 * 30);
-
     return res.status(200).json({
         message: 'Inicio de sesión exitoso',
         accessToken

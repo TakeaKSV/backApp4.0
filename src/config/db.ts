@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const connectDB = async (): Promise<void> => {
-    const mongoURL = 'mongodb://takea:123456@localhost:27017/user?authSource=user';
+    const mongoURL = 'mongodb+srv://takea:cesitron@cluster0.giagssh.mongodb.net/proyectoMich';
     try {
         await mongoose.connect(mongoURL);
         console.log('Conectao canijo');
